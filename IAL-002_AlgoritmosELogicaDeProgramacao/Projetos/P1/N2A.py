@@ -65,9 +65,13 @@ def getIntervalHalfIdx(lowestValue, highestValue):
 print("Lendo arquivo...")
 
 with open("vendas.txt", "r") as file:
-    #Como file.readlines() retorna uma lista contendo cada linha do arquivo
-    #É feito um map para formatar cada linha da lista
-    vendas = list(map(formatSaleItem, file.readlines()))
+    #O arquivo é lido linha por linha com o file.readline()
+    #Cada linha é formatada e jogada numa lista
+    line = file.readline()
+    while line != "":
+        vendas.append(formatSaleItem(line))
+        line = file.readline()
+        
     totalQtnVendas = len(vendas)
 
 print("Leitura de arquivo finalizada\n")
