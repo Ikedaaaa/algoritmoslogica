@@ -29,6 +29,7 @@ transferencias = []
 divergencias = []
 totcanais = [["1 - Representantes", 0], ["2 - Website", 0], ["3 - App móvel Android", 0], ["4 - App móvel iPhone", 0]]
 
+#******************* ENTRADA DE DADOS ********************
 with open('PRODUTOS.TXT', 'r') as arquivoProdutos:
     infoProduto = arquivoProdutos.readline().rstrip()
     while infoProduto != "":
@@ -49,7 +50,20 @@ for idx, venda in enumerate(vendas):
 
     if productIdx > -1:
         if venda[2] in [100, 102]:
+            transferencias[productIdx][1] += venda[1] #QtVendas
+            transferencias[productIdx][2] -= venda[1] #Estoq.após
+            totcanais[venda[3]-1][1] += venda[1] #QtVendas por canal
         else:
             divergencias.append(getDivergency(venda[2], idx+1, 0))
     else:
         divergencias.append(getDivergency(404, idx+1, venda[0])) #Error 404 - Not Found
+
+i = 0
+while i < len(transferencias):
+    if transferencias[i][2] < produtos[i][2]:
+        transferencias[i][3] = produtos[i][2] - transferencias[i][2] #Necessidade
+        
+    transferencias[i][4] = 10 if 1 < transferencias[i][3] < 10 else transferencias[i][3] #Transf. de Arm p/ CO
+    i += 1
+
+
