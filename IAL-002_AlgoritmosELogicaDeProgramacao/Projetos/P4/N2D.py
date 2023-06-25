@@ -52,48 +52,57 @@ print("\nProcessando os dados de entrada\n")
 for idx, venda in enumerate(vendas):
     productIdx = getProductIdxById(venda[0])
 
-    if productIdx > -1:
-        if venda[2] in [100, 102]:
+    if not productIdx > -1:
+        divergencias.append(getDivergency(404, idx+1, venda[0])) #Error 404 - Not Found
+        
+    if venda[2] in [100, 102]:
+        if productIdx > -1:
             transferencias[productIdx][1] += venda[1] #QtVendas
             transferencias[productIdx][2] -= venda[1] #Estoq.após
             totcanais[venda[3]-1][1] += venda[1] #QtVendas por canal
-        else:
-            divergencias.append(getDivergency(venda[2], idx+1, 0))
     else:
-        divergencias.append(getDivergency(404, idx+1, venda[0])) #Error 404 - Not Found
+        divergencias.append(getDivergency(venda[2], idx+1, 0))
 
 i = 0
 while i < len(transferencias):
     if transferencias[i][2] < produtos[i][2]:
         transferencias[i][3] = produtos[i][2] - transferencias[i][2] #Necessidade
         
-    transferencias[i][4] = 10 if 1 < transferencias[i][3] < 10 else transferencias[i][3] #Transf. de Arm p/ CO
+    transferencias[i][4] = 10 if 1 <= transferencias[i][3] < 10 else transferencias[i][3] #Transf. de Arm p/ CO
     i += 1
 
 #*********** GRAVAÇÃO DOS DADOS NOS DEVIDOS ARQUIVOS ************
 
-print("Gravando informações no arquivo TRANSFERE.TXT\n")
+print("Gravando informações no arquivo TRANSFERE.TXT")
+try:
+    arqTransfLineFmt = "{:<7}{:>6}{:>7}{:>10}{:>11}{:>9}{:>12}\n"
+    with open("TRANSFERE.TXT", "w") as arquivoTransferencias:
+        arquivoTransferencias.write("Necessidade de Transferência Armazém para CO\n\n")
+        arquivoTransferencias.write(arqTransfLineFmt.format("Produto", "QtCO", "QtMin", "QtVendas", "Estq.após", "Necess.", "Transf. de"))
+        arquivoTransferencias.write(arqTransfLineFmt.format("", "", "", "", "Vendas", "", "Arm p/ CO"))
 
-arqTransfLineFmt = "{:<7}{:>6}{:>7}{:>10}{:>11}{:>9}{:>12}\n"
-with open("TRANSFERE.TXT", "w") as arquivoTransferencias:
-    arquivoTransferencias.write("Necessidade de Transferência Armazém para CO\n\n")
-    arquivoTransferencias.write(arqTransfLineFmt.format("Produto", "QtCO", "QtMin", "QtVendas", "Estq.após", "Necess.", "Transf. de"))
-    arquivoTransferencias.write(arqTransfLineFmt.format("", "", "", "", "Vendas", "", "Arm p/ CO"))
+        for idx, transferencia in enumerate(transferencias):
+            arquivoTransferencias.write(arqTransfLineFmt.format(transferencia[0], produtos[idx][1], produtos[idx][2], transferencia[1], transferencia[2], transferencia[3], transferencia[4]))
+except:
+    print("Houve um problema ao gravar as informações no arquivo TRANSFERE.TXT\n")
 
-    for idx, transferencia in enumerate(transferencias):
-        arquivoTransferencias.write(arqTransfLineFmt.format(transferencia[0], produtos[idx][1], produtos[idx][2], transferencia[1], transferencia[2], transferencia[3], transferencia[4]))
+print("Gravando informações no arquivo DIVERGENCIAS.TXT")
+try:
+    with open("DIVERGENCIAS.TXT", "w") as arquivoDivergencias:
+        for divergencia in divergencias:
+            arquivoDivergencias.write(divergencia+"\n")
+except:
+    print("Houve um problema ao gravar as informações no arquivo DIVERGENCIAS.TXT\n")
 
-print("Gravando informações no arquivo DIVERGENCIAS.TXT\n")
-with open("DIVERGENCIAS.TXT", "w") as arquivoDivergencias:
-    for divergencia in divergencias:
-        arquivoDivergencias.write(divergencia+"\n")
+print("Gravando informações no arquivo TOTCANAIS.TXT")
+try:
+    with open("TOTCANAIS.TXT", "w") as arquivoTotcanais:
+        arquivoTotcanais.write("Quantidades de Vendas por canal\n\n")
+        arquivoTotcanais.write("{:<23}{:>8}\n".format("Canal", "QtVendas"))
 
-print("Gravando informações no arquivo TOTCANAIS.TXT\n")
-with open("TOTCANAIS.TXT", "w") as arquivoTotcanais:
-    arquivoTotcanais.write("Quantidades de Vendas por canal\n\n")
-    arquivoTotcanais.write("{:<23}{:>8}\n".format("Canal", "QtVendas"))
+        for totcanal in totcanais:
+            arquivoTotcanais.write("{:<23}{:>8}\n".format(totcanal[0], totcanal[1]))
+except:
+    print("Houve um problema ao gravar as informações no arquivo TOTCANAIS.TXT\n")
 
-    for totcanal in totcanais:
-        arquivoTotcanais.write("{:<23}{:>8}\n".format(totcanal[0], totcanal[1]))
-
-print("******************** Fim do Programa ********************")
+print("\n******************** Fim do Programa ********************")
