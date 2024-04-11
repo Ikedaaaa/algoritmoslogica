@@ -64,6 +64,21 @@ var
         end;
         FuncPositiveCount := count;
     end;
+
+    function NegativeCount(p: pilha): integer;
+    var
+        count: integer;
+    begin
+        count := 0;
+        while not IsEmpty(p) do
+        begin
+            if p.vetor[p.topo] < 0 then
+                count := count + 1;
+                
+            Pop(p);
+        end;
+        NegativeCount := count;
+    end;
 begin
   max := 10;
   Init(p);
@@ -82,6 +97,9 @@ begin
   
   writeln;
   writeln('Números positivos na pilha por função: ', FuncPositiveCount(p));
+
+  writeln;
+  writeln('A pilha possui ', NegativeCount(p), ' elementos negativos');
   
   writeln;
   writeln('Saída da pilha: ');
