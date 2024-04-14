@@ -90,6 +90,19 @@ type
             p := p^.prox;
         end;
     end;
+    
+    function ContaNegativos(p: endnodo): integer;
+    var count: integer;
+    begin
+        count := 0;
+        while p <> nil do
+        begin
+            if p^.info < 0 then
+                count := count + 1;
+            p := p^.prox;
+        end;
+        ContaNegativos := count;
+    end;
 var
     p: endnodo;
     num: integer;
@@ -98,6 +111,7 @@ var
 begin
     Init(stack);
     StackMax := 10;
+    p := nil;
     
     writeln('Digite 10 números para preencher uma pilha: ');
     while not IsFull(stack, StackMax) do
@@ -113,6 +127,9 @@ begin
     writeln('OptimizedStackCount: ', OptimizedStackCount(stack));
 
     FillListFromStack(p, stack);
+    
+    writeln;
+    writeln('Números negativos na lista: ', ContaNegativos(p));
     
     writeln;
     PrintList(p);
