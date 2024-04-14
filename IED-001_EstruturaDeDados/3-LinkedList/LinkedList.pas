@@ -96,12 +96,12 @@ type
     end;
     
     function IncludeEndAndSum(var p: endnodo; n: integer): integer;
-    var q, r: endnodo; count: integer;
+    var q, r: endnodo; sum: integer;
     begin
         new(r);
         r^.info := n;
         r^.prox := nil;
-        count := n;
+        sum := n;
         
         if p = nil then
             p := r
@@ -109,13 +109,39 @@ type
             q := p;
             while q^.prox <> nil do
             begin
-                n := n + q^.info;
+                sum := sum + q^.info;
                 q := q^.prox;
             end;
-            n := n + q^.info;
+            sum := sum + q^.info;
             q^.prox := r;
         end;
-        IncludeEndAndSum := n;
+        IncludeEndAndSum := sum;
+    end;
+
+    procedure IncludeAfterEven(var p: endnodo; n: integer);
+    var q, r: endnodo; foundeven: boolean;
+    begin
+        new(r);
+        r^.info := n;
+        r^.prox := nil;
+        foundeven := false;
+        
+        if p = nil then
+            p := r
+        else begin
+            q := p;
+            while (q^.prox <> nil) and not foundeven do
+            begin
+                if q^.info mod 2 = 0 then
+                    foundeven := true
+                else
+                    q := q^.prox;
+            end;
+            if foundeven then
+                r^.prox := q^.prox;
+                
+            q^.prox := r;
+        end;
     end;
 var
     p: endnodo;
@@ -152,6 +178,11 @@ begin
     writeln('Digite um número para inserir na lista e somar todos os elementos: ');
     readln(num);
     writeln('Soma dos elementos da lista: ', IncludeEndAndSum(p, num));
+
+    writeln;
+    writeln('Digite um número para inserir na lista após o primeiro par, caso não possua elementos pares, será inserido no final: ');
+    readln(num);
+    IncludeAfterEven(p, num);
     
     writeln;
     writeln('Quantidade de elementos da lista: ', count(p));
