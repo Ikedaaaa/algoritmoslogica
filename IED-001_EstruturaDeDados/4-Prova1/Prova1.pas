@@ -54,6 +54,42 @@ type
     begin
         OptimizedStackCount := p.topo;
     end;
+
+    procedure FillListFromStack(var p: endnodo; p_pilha: pilha);
+    var q, r: endnodo;
+    begin
+        if not IsEmpty(p_pilha) then
+        begin
+            new(p);
+            p^.info := p_pilha.vet[p_pilha.topo];
+            p^.prox := nil;
+            q := p;
+            Pop(p_pilha);
+        end;
+        
+        while not IsEmpty(p_pilha) do
+        begin
+            new(r);
+            r^.info := p_pilha.vet[p_pilha.topo];
+            r^.prox := nil;
+            q^.prox := r;
+            q := r;
+            Pop(p_pilha);
+        end;
+    end;
+    
+    procedure PrintList(p: endnodo);
+    var idx: integer;
+    begin
+        idx := 1;
+        writeln('Itens da lista:');
+        while p <> nil do
+        begin
+            writeln(idx, 'º: ', p^.info);
+            idx := idx + 1;
+            p := p^.prox;
+        end;
+    end;
 var
     p: endnodo;
     num: integer;
@@ -75,6 +111,11 @@ begin
     writeln('A pilha contém:');
     writeln('StackCount: ', StackCount(stack));
     writeln('OptimizedStackCount: ', OptimizedStackCount(stack));
+
+    FillListFromStack(p, stack);
+    
+    writeln;
+    PrintList(p);
     
     writeln;
     writeln('Esvaziando pilha:');
