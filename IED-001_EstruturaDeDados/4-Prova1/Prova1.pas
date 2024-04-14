@@ -37,6 +37,23 @@ type
     begin
         p.topo := p.topo - 1;
     end;
+
+    function StackCount(p: pilha): integer;
+    var n: integer;
+    begin
+        n := 0;
+        while not IsEmpty(p) do
+        begin
+            n := n + 1;
+            Pop(p);
+        end;
+        StackCount := n;
+    end;
+    
+    function OptimizedStackCount(p: pilha): integer;
+    begin
+        OptimizedStackCount := p.topo;
+    end;
 var
     p: endnodo;
     num: integer;
@@ -53,6 +70,11 @@ begin
         readln(num);
         Push(stack, num);
     end;
+
+    writeln;
+    writeln('A pilha contém:');
+    writeln('StackCount: ', StackCount(stack));
+    writeln('OptimizedStackCount: ', OptimizedStackCount(stack));
     
     writeln;
     writeln('Esvaziando pilha:');
