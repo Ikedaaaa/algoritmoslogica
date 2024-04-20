@@ -15,12 +15,12 @@ type
     
     function IsEmpty(line: fila): boolean;
     begin
-        IsEmpty := line.inic > line.fim;
+        IsEmpty := line.fim = 0;
     end;
     
     function IsFull(line: fila; max: integer): boolean;
     begin
-        IsFull := (line.fim = max); //and (line.fim > line.inic);
+        IsFull := (line.fim = max);
     end;
     
     procedure Enqueue(var line: fila; n: integer);
@@ -30,15 +30,26 @@ type
     end;
     
     procedure Dequeue(var line: fila);
+    var n: integer;
     begin
-        line.inic := line.inic + 1;
+        if not IsEmpty(line) then
+        begin
+            n := 1;
+            line.fim := line.fim - 1;
+            while (n <= line.fim) do
+            begin
+                line.vetor[n] := line.vetor[n+1];
+                n := n + 1;
+            end;
+        end else
+            writeln('Line is already empty!');
     end;
     
     procedure PrintLine(line: fila);
     var aux: integer;
     begin
         aux := 1;
-        writeln('Elementos da fila:');
+        writeln('Line Elements:');
         while not IsEmpty(line) do
         begin
             writeln(aux, '°: ', line.vetor[line.inic]);
@@ -50,7 +61,7 @@ type
     procedure PrintLineDequeueing(var line: fila);
     begin
         writeln;
-        writeln('Impressão da fila enquanto ela é esvaziada:');
+        writeln('Line printed while all elements are removed:');
         while not IsEmpty(line) do
         begin
             writeln;
@@ -66,23 +77,44 @@ begin
     aux := 1;
     max := 5;
     
-    //Para o estudo de Estrutura de Dados, a fila é iniciada com
-    //idx inic := 1;
-    //idx fim := 0;
-    //Feito dessa forma para que a indicação de IsEmpty possa ser line.inic > line.fim;
-    //Para cada elemento inserido, simplesmente o idx fim sobe uma posição até que atinja o max de elementos no vetor da fila
-    //Para remover elementos, o inic sobe uma posição até passar o fim.
-    //O vetor não seria reordenado para "a fila andar", pois, segundo o professor, isso seria manipulação de vetor
-    //Como o foco é estudar a Estrutura de Dados Fila, não é necessário estudar manipulação de vetor pois não é o foco
-    //Quando a fila estiver cheia e depois for esvaziada, o programa será encerrado, pois o vator da fila não será reordenado
-    
-    writeln('Digite números para preencher uma fila:');
+    writeln('Enter 5 numbers to fill a Line:');
     while not IsFull(f, max) do
     begin
         write(aux, '°: ');
         readln(num);
         Enqueue(f, num);
         aux := aux + 1;
+    end;
+    
+    writeln;
+    PrintLine(f);
+    
+    writeln;
+    writeln('Type' + sLineBreak + '1 - Insert in Line;' + sLineBreak + '2 - Remove from Line;' + sLineBreak + 'Another number - Exit:');
+    readln(num);
+    while (num = 1) or (num = 2) do
+    begin
+        if num = 1 then
+        begin
+            if not IsFull(f, max) then
+            begin
+                write('Type the number to insert in the line: ');
+                readln(num);
+                Enqueue(f, num);
+                writeln('Line after the element was inserted:');
+                PrintLine(f);
+            end else
+                writeln('The line is already full!');
+        end else
+        begin
+            Dequeue(f);
+            writeln('Line after the element was removed:');
+            PrintLine(f);
+        end;
+    
+        writeln;
+        writeln('Digite' + sLineBreak + '1 - Inserir na Fila;' + sLineBreak + '2 - Remover da Fila' + sLineBreak + 'Outro número - Sair:');
+        readln(num);
     end;
     
     PrintLineDequeueing(f);
