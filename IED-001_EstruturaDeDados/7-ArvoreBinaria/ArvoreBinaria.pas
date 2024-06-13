@@ -7,39 +7,6 @@ program ArvoreBinaria;
             esq: arvore;
     end;
     
-    {function BuscaNilNodeNW(n: integer; raiz: arvore): arvore; //Thought it would work, but doesn't (NW = Not Working)
-    begin
-        if raiz = nil then
-            BuscaNilNode := raiz
-        else begin
-            if n <= raiz^.info then
-            begin
-                if raiz^.esq = nil then
-                    BuscaNilNode := raiz^.esq
-                else
-                    BuscaNilNode := BuscaNilNode(n, raiz^.esq);
-            end else
-            begin
-                if raiz^.dir = nil then
-                    BuscaNilNode := raiz^.dir
-                else
-                    BuscaNilNode := BuscaNilNode(n, raiz^.dir);
-            end;
-        end;
-    end;}
-    
-    {function BuscaNilAnotherWayNW(n: integer; raiz: arvore): arvore; //Doesn't work  (NW = Not Working)
-    begin
-        if raiz = nil then
-            BuscaNilAnotherWay := raiz
-        else begin
-            if n <= raiz^.info then
-                BuscaNilAnotherWay := BuscaNilAnotherWay(n, raiz^.esq);
-            else
-                BuscaNilAnotherWay := BuscaNilAnotherWay(n, raiz^.dir);
-        end;
-    end;}
-    
     procedure CriaNodo(n: integer; var node: arvore);
     var t: arvore;
     begin
